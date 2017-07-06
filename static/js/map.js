@@ -821,7 +821,7 @@ function getGymMarkerIcon(item) {
     }
     if (item['raid_pokemon_id'] != null && item.raid_end > Date.now()) {
         return '<div style="position:relative;">' +
-            '<img src="static/forts/' + Store.get('gymMarkerStyle') + '/' + teamStr + '.png" style="width:48px;height:auto;"/>' +
+            '<img src="static/forts/' + Store.get('gymMarkerStyle') + '/' + teamStr + '.png" style="width:55px;height:auto;"/>' +
             '<i class="pokemon-raid-sprite n' + item.raid_pokemon_id + '"></i>' +
             '</div>'
     } else if (item['raid_level'] !== null && item.raid_end > Date.now()) {
@@ -834,8 +834,8 @@ function getGymMarkerIcon(item) {
             raidEgg = 'legendary'
         }
         return '<div style="position:relative;">' +
-            '<img src="static/forts/' + Store.get('gymMarkerStyle') + '/' + teamStr + '.png" style="width:48px;height:auto;"/>' +
-            '<img src="static/raids/egg_' + raidEgg + '.png" style="width:30px;height:auto;position:absolute;top:8px;right:8px;"/>' +
+            '<img src="static/forts/' + Store.get('gymMarkerStyle') + '/' + teamStr + '.png" style="width:55px;height:auto;"/>' +
+            '<img src="static/raids/egg_' + raidEgg + '.png" style="width:30px;height:auto;position:absolute;top:8px;right:12px;"/>' +
             '</div>'
     } else {
         return '<div>' +
@@ -850,7 +850,7 @@ function setupGymMarker(item) {
         map: map,
         content: getGymMarkerIcon(item),
         flat: true,
-        anchor: RichMarkerPosition.TOP
+        anchor: RichMarkerPosition.MIDDLE
     })
 
     if (!marker.rangeCircle && isRangeActive(map)) {
@@ -859,7 +859,8 @@ function setupGymMarker(item) {
 
     marker.infoWindow = new google.maps.InfoWindow({
         content: gymLabel(item),
-        disableAutoPan: true
+        disableAutoPan: true,
+        pixelOffset: new google.maps.Size(0, -20)
     })
 
     var raidLevel = item.raid_level
@@ -931,31 +932,34 @@ function updateGymMarker(item, marker) {
 
     var raidLevel = item.raid_level
     if (raidLevel >= Store.get('remember_raid_notify') && item.raid_end > Date.now() && Store.get('remember_raid_notify') !== 0) {
-        if (Store.get('playSound')) {
-            audio.play()
-        }
-        var title = 'Raid level: ' + raidLevel
-
-        var raidStartStr = getTimeStr(item['raid_start'])
-        var raidEndStr = getTimeStr(item['raid_end'])
-        var text = raidStartStr + ' - ' + raidEndStr
-
-        var raidStarted = item['raid_pokemon_id'] != null
-        var icon
-        if (raidStarted) {
-            icon = 'static/icons/' + item.raid_pokemon_id + '.png'
-        } else {
-            var raidEgg = ''
-            if (item['raid_level'] <= 2) {
-                raidEgg = 'normal'
-            } else if (item['raid_level'] <= 4) {
-                raidEgg = 'rare'
-            } else {
-                raidEgg = 'legendary'
+        var raidPokemon = mapData.gyms[item['gym_id']].raid_pokemon_id
+        if (item.raid_pokemon_id !== raidPokemon) {
+            if (Store.get('playSound')) {
+                audio.play()
             }
-            icon = 'static/raids/egg_' + raidEgg + '.png'
+            var title = 'Raid level: ' + raidLevel
+
+            var raidStartStr = getTimeStr(item['raid_start'])
+            var raidEndStr = getTimeStr(item['raid_end'])
+            var text = raidStartStr + ' - ' + raidEndStr
+
+            var raidStarted = item['raid_pokemon_id'] != null
+            var icon
+            if (raidStarted) {
+                icon = 'static/icons/' + item.raid_pokemon_id + '.png'
+            } else {
+                var raidEgg = ''
+                if (item['raid_level'] <= 2) {
+                    raidEgg = 'normal'
+                } else if (item['raid_level'] <= 4) {
+                    raidEgg = 'rare'
+                } else {
+                    raidEgg = 'legendary'
+                }
+                icon = 'static/raids/egg_' + raidEgg + '.png'
+            }
+            sendNotification(title, text, icon, item['latitude'], item['longitude'])
         }
-        sendNotification(title, text, icon, item['latitude'], item['longitude'])
     }
 
     return marker
