@@ -59,85 +59,100 @@ $ids = array();
 $eids = array();
 $reids = array();
 
-if ($d["lastpokemon"] == "true") {
-    if ($lastpokemon != 'true') {
-        $d["pokemons"] = get_active($swLat, $swLng, $neLat, $neLng);
-    } else {
-        if ($newarea) {
-            $d["pokemons"] = get_active($swLat, $swLng, $neLat, $neLng, 0, $oSwLat, $oSwLng, $oNeLat, $oNeLng);
+global $noPokemon;
+if (!$noPokemon) {
+    if ($d["lastpokemon"] == "true") {
+        if ($lastpokemon != 'true') {
+            $d["pokemons"] = get_active($swLat, $swLng, $neLat, $neLng);
         } else {
-            $d["pokemons"] = get_active($swLat, $swLng, $neLat, $neLng, $timestamp);
+            if ($newarea) {
+                $d["pokemons"] = get_active($swLat, $swLng, $neLat, $neLng, 0, $oSwLat, $oSwLng, $oNeLat, $oNeLng);
+            } else {
+                $d["pokemons"] = get_active($swLat, $swLng, $neLat, $neLng, $timestamp);
+            }
         }
-    }
 
-    if (isset($_GET['eids'])) {
-        $eids = explode(",", $_GET['eids']);
+        if (isset($_GET['eids'])) {
+            $eids = explode(",", $_GET['eids']);
 
-        foreach ($d['pokemons'] as $elementKey => $element) {
-            foreach ($element as $valueKey => $value) {
-                if ($valueKey == 'pokemon_id') {
-                    if (in_array($value, $eids)) {
-                        //delete this particular object from the $array
-                        unset($d['pokemons'][$elementKey]);
+            foreach ($d['pokemons'] as $elementKey => $element) {
+                foreach ($element as $valueKey => $value) {
+                    if ($valueKey == 'pokemon_id') {
+                        if (in_array($value, $eids)) {
+                            //delete this particular object from the $array
+                            unset($d['pokemons'][$elementKey]);
+                        }
                     }
                 }
             }
         }
-    }
 
-    if (isset($_GET['reids'])) {
-        $reids = explode(",", $_GET['reids']);
+        if (isset($_GET['reids'])) {
+            $reids = explode(",", $_GET['reids']);
 
-        $d["pokemons"] = $d["pokemons"] + (get_active_by_id($reids, $swLat, $swLng, $neLat, $neLng));
+            $d["pokemons"] = $d["pokemons"] + (get_active_by_id($reids, $swLat, $swLng, $neLat, $neLng));
 
-        $d["reids"] = !empty($_GET['reids']) ? $reids : null;
-    }
-}
-
-if ($d["lastpokestops"] == "true") {
-    if ($lastpokestops != "true") {
-        $d["pokestops"] = get_stops($swLat, $swLng, $neLat, $neLng, 0, 0, 0, 0, 0, $luredonly);
-    } else {
-        if ($newarea) {
-            $d["pokestops"] = get_stops($swLat, $swLng, $neLat, $neLng, 0, $oSwLat, $oSwLng, $oNeLat, $oNeLng, $luredonly);
-        } else {
-            $d["pokestops"] = get_stops($swLat, $swLng, $neLat, $neLng, $timestamp, 0, 0, 0, 0, $luredonly);
+            $d["reids"] = !empty($_GET['reids']) ? $reids : null;
         }
     }
 }
 
-if ($d["lastgyms"] == "true") {
-    if ($lastgyms != "true") {
-        $d["gyms"] = get_gyms($swLat, $swLng, $neLat, $neLng);
-    } else {
-        if ($newarea) {
-            $d["gyms"] = get_gyms($swLat, $swLng, $neLat, $neLng, 0, $oSwLat, $oSwLng, $oNeLat, $oNeLng);
+global $noPokestops;
+if (!$noPokestops) {
+    if ($d["lastpokestops"] == "true") {
+        if ($lastpokestops != "true") {
+            $d["pokestops"] = get_stops($swLat, $swLng, $neLat, $neLng, 0, 0, 0, 0, 0, $luredonly);
         } else {
-            $d["gyms"] = get_gyms($swLat, $swLng, $neLat, $neLng, $timestamp);
+            if ($newarea) {
+                $d["pokestops"] = get_stops($swLat, $swLng, $neLat, $neLng, 0, $oSwLat, $oSwLng, $oNeLat, $oNeLng, $luredonly);
+            } else {
+                $d["pokestops"] = get_stops($swLat, $swLng, $neLat, $neLng, $timestamp, 0, 0, 0, 0, $luredonly);
+            }
         }
     }
 }
 
-if ($d["lastspawns"] == "true") {
-    if ($lastspawns != "true") {
-        $d["spawnpoints"] = get_spawnpoints($swLat, $swLng, $neLat, $neLng);
-    } else {
-        if ($newarea) {
-            $d["spawnpoints"] = get_spawnpoints($swLat, $swLng, $neLat, $neLng, 0, $oSwLat, $oSwLng, $oNeLat, $oNeLng);
+global $noGyms, $noRaids;
+if (!$noGyms && !$noRaids) {
+    if ($d["lastgyms"] == "true") {
+        if ($lastgyms != "true") {
+            $d["gyms"] = get_gyms($swLat, $swLng, $neLat, $neLng);
         } else {
-            $d["spawnpoints"] = get_spawnpoints($swLat, $swLng, $neLat, $neLng, $timestamp);
+            if ($newarea) {
+                $d["gyms"] = get_gyms($swLat, $swLng, $neLat, $neLng, 0, $oSwLat, $oSwLng, $oNeLat, $oNeLng);
+            } else {
+                $d["gyms"] = get_gyms($swLat, $swLng, $neLat, $neLng, $timestamp);
+            }
         }
     }
 }
 
-if ($d["lastslocs"] == "true") {
-    if ($lastlocs != "true") {
-        $d["scanned"] = get_recent($swLat, $swLng, $neLat, $neLng);
-    } else {
-        if ($newarea) {
-            $d["scanned"] = get_recent($swLat, $swLng, $neLat, $neLng, 0, $oSwLat, $oSwLng, $oNeLat, $oNeLng);
+global $noSpawnPoints;
+if (!$noSpawnPoints) {
+    if ($d["lastspawns"] == "true") {
+        if ($lastspawns != "true") {
+            $d["spawnpoints"] = get_spawnpoints($swLat, $swLng, $neLat, $neLng);
         } else {
-            $d["scanned"] = get_recent($swLat, $swLng, $neLat, $neLng, $timestamp);
+            if ($newarea) {
+                $d["spawnpoints"] = get_spawnpoints($swLat, $swLng, $neLat, $neLng, 0, $oSwLat, $oSwLng, $oNeLat, $oNeLng);
+            } else {
+                $d["spawnpoints"] = get_spawnpoints($swLat, $swLng, $neLat, $neLng, $timestamp);
+            }
+        }
+    }
+}
+
+global $noScannedLocations;
+if (!$noScannedLocations) {
+    if ($d["lastslocs"] == "true") {
+        if ($lastlocs != "true") {
+            $d["scanned"] = get_recent($swLat, $swLng, $neLat, $neLng);
+        } else {
+            if ($newarea) {
+                $d["scanned"] = get_recent($swLat, $swLng, $neLat, $neLng, 0, $oSwLat, $oSwLng, $oNeLat, $oNeLng);
+            } else {
+                $d["scanned"] = get_recent($swLat, $swLng, $neLat, $neLng, $timestamp);
+            }
         }
     }
 }
@@ -212,23 +227,28 @@ function get_active($swLat, $swLng, $neLat, $neLng, $tstamp = 0, $oSwLat = 0, $o
 
         $p["disappear_time"] = $dissapear; //done
         $p["encounter_id"] = $row["encounter_id"]; //done
-        $p["individual_attack"] = $atk; //done
-        $p["individual_defense"] = $def; //done
-        $p["individual_stamina"] = $sta; //done
+
+        global $noHighLevelData;
+        if (!$noHighLevelData) {
+            $p["individual_attack"] = $atk; //done
+            $p["individual_defense"] = $def; //done
+            $p["individual_stamina"] = $sta; //done
+            $p["move_1"] = $mv1; //done
+            $p["move_2"] = $mv2;
+            $p["weight"] = $weight;
+            $p["height"] = $height;
+            $p["cp"] = $cp;
+            $p["cp_multiplier"] = $cpm;
+            $p["level"] = $level;
+        }
+
         $p["latitude"] = $lat; //done
         $p["longitude"] = $lon; //done
-        $p["move_1"] = $mv1; //done
-        $p["move_2"] = $mv2;
-        $p["weight"] = $weight;
-        $p["height"] = $height;
         $p["gender"] = $gender;
         $p["form"] = $form;
         $p["pokemon_id"] = $pokeid;
         $p["pokemon_name"] = i8ln($data[$pokeid]['name']);
         $p["pokemon_rarity"] = i8ln($data[$pokeid]['rarity']);
-        $p["cp"] = $cp;
-        $p["cp_multiplier"] = $cpm;
-        $p["level"] = $level;
 
         $types = $data[$pokeid]["types"];
         foreach ($types as $k => $v) {
@@ -299,25 +319,32 @@ function get_active_by_id($ids, $swLat, $swLng, $neLat, $neLng)
         $form = isset($row["form"]) ? intval($row["form"]) : null;
         $cp = isset($row["cp"]) ? intval($row["cp"]) : null;
         $cpm = isset($row["cp_multiplier"]) ? floatval($row["cp_multiplier"]) : null;
+        $level = isset($row["level"]) ? intval($row["level"]) : null;
 
         $p["disappear_time"] = $dissapear; //done
         $p["encounter_id"] = $row["encounter_id"]; //done
-        $p["individual_attack"] = $atk; //done
-        $p["individual_defense"] = $def; //done
-        $p["individual_stamina"] = $sta; //done
+
+        global $noHighLevelData;
+        if (!$noHighLevelData) {
+            $p["individual_attack"] = $atk; //done
+            $p["individual_defense"] = $def; //done
+            $p["individual_stamina"] = $sta; //done
+            $p["move_1"] = $mv1; //done
+            $p["move_2"] = $mv2;
+            $p["weight"] = $weight;
+            $p["height"] = $height;
+            $p["cp"] = $cp;
+            $p["cp_multiplier"] = $cpm;
+            $p["level"] = $level;
+        }
+
         $p["latitude"] = $lat; //done
         $p["longitude"] = $lon; //done
-        $p["move_1"] = $mv1; //done
-        $p["move_2"] = $mv2;
-        $p["weight"] = $weight;
-        $p["height"] = $height;
         $p["gender"] = $gender;
         $p["form"] = $form;
         $p["pokemon_id"] = $pokeid;
         $p["pokemon_name"] = i8ln($data[$pokeid]['name']);
         $p["pokemon_rarity"] = i8ln($data[$pokeid]['rarity']);
-        $p["cp"] = $cp;
-        $p["cp_multiplier"] = $cpm;
 
         $p["pokemon_types"] = $data[$pokeid]["types"];
         $p["spawnpoint_id"] = $row["spawn_id"];
@@ -387,10 +414,10 @@ function get_stops($swLat, $swLng, $neLat, $neLng, $tstamp = 0, $oSwLat = 0, $oS
 
         $p["active_fort_modifier"] = isset($row["active_fort_modifier"]) ? $row["active_fort_modifier"] : null;
         $p["enabled"] = isset($row["enabled"]) ? boolval($row["enabled"]) : true;
-        $p["last_modified"] = isset($row["last_modified"]) ? intval($row["last_modified"]) * 1000 : 0;
+        $p["last_modified"] = isset($row["last_modified"]) ? $row["last_modified"] * 1000 : 0;
         $p["latitude"] = $lat;
         $p["longitude"] = $lon;
-        $p["lure_expiration"] = isset($row["lure_expiration"]) ? intval($row["lure_expiration"]) * 1000 : null;
+        $p["lure_expiration"] = isset($row["lure_expiration"]) ? $row["lure_expiration"] * 1000 : null;
         $p["pokestop_id"] = $row["external_id"];
 
         $pokestops[] = $p;
@@ -423,16 +450,16 @@ function get_gyms($swLat, $swLng, $neLat, $neLng, $tstamp = 0, $oSwLat = 0, $oSw
         }
     } else {
         if ($swLat == 0) {
-            $datas = $db->query("select gym.gym_id as external_id, latitude as lat, longitude as lon, guard_pokemon_id, slots_available, total_cp, UNIX_TIMESTAMP(CONVERT_TZ(last_modified, '+00:00', @@global.time_zone)) as last_modified, UNIX_TIMESTAMP(CONVERT_TZ(gym.last_scanned, '+00:00', @@global.time_zone)) as last_scanned, team_id as team, enabled, name, level, pokemon_id, cp, move_1, move_2, UNIX_TIMESTAMP(CONVERT_TZ(raid_start, '+00:00', @@global.time_zone)) as raid_start, UNIX_TIMESTAMP(CONVERT_TZ(raid_end, '+00:00', @@global.time_zone)) as raid_end from gym left join gymdetails on gym.gym_id = gymdetails.gym_id left join raid on gym.gym_id = raid.gym_id")->fetchAll();
+            $datas = $db->query("select gym.gym_id as external_id, latitude as lat, longitude as lon, guard_pokemon_id, slots_available, total_cp, UNIX_TIMESTAMP(CONVERT_TZ(last_modified, '+00:00', @@global.time_zone)) as last_modified, UNIX_TIMESTAMP(CONVERT_TZ(gym.last_scanned, '+00:00', @@global.time_zone)) as last_scanned, team_id as team, enabled, name, level, pokemon_id, cp, move_1, move_2, UNIX_TIMESTAMP(CONVERT_TZ(start, '+00:00', @@global.time_zone)) as raid_start, UNIX_TIMESTAMP(CONVERT_TZ(end, '+00:00', @@global.time_zone)) as raid_end from gym left join gymdetails on gym.gym_id = gymdetails.gym_id left join raid on gym.gym_id = raid.gym_id")->fetchAll();
         } elseif ($tstamp > 0) {
             $date = new DateTime();
             $date->setTimezone(new DateTimeZone('UTC'));
             $date->setTimestamp($tstamp);
-            $datas = $db->query("select gym.gym_id as external_id, latitude as lat, longitude as lon, guard_pokemon_id, slots_available, total_cp, UNIX_TIMESTAMP(CONVERT_TZ(last_modified, '+00:00', @@global.time_zone)) as last_modified, UNIX_TIMESTAMP(CONVERT_TZ(gym.last_scanned, '+00:00', @@global.time_zone)) as last_scanned, team_id as team, enabled, name, level, pokemon_id, cp, move_1, move_2, UNIX_TIMESTAMP(CONVERT_TZ(raid_start, '+00:00', @@global.time_zone)) as raid_start, UNIX_TIMESTAMP(CONVERT_TZ(raid_end, '+00:00', @@global.time_zone)) as raid_end from gym left join gymdetails on gym.gym_id = gymdetails.gym_id left join raid on gym.gym_id = raid.gym_id where gym.last_scanned > '" . date_format($date, 'Y-m-d H:i:s') . "' and latitude > " . $swLat . " and longitude > " . $swLng . " and latitude < " . $neLat . " and longitude < " . $neLng)->fetchAll();
+            $datas = $db->query("select gym.gym_id as external_id, latitude as lat, longitude as lon, guard_pokemon_id, slots_available, total_cp, UNIX_TIMESTAMP(CONVERT_TZ(last_modified, '+00:00', @@global.time_zone)) as last_modified, UNIX_TIMESTAMP(CONVERT_TZ(gym.last_scanned, '+00:00', @@global.time_zone)) as last_scanned, team_id as team, enabled, name, level, pokemon_id, cp, move_1, move_2, UNIX_TIMESTAMP(CONVERT_TZ(start, '+00:00', @@global.time_zone)) as raid_start, UNIX_TIMESTAMP(CONVERT_TZ(end, '+00:00', @@global.time_zone)) as raid_end from gym left join gymdetails on gym.gym_id = gymdetails.gym_id left join raid on gym.gym_id = raid.gym_id where gym.last_scanned > '" . date_format($date, 'Y-m-d H:i:s') . "' and latitude > " . $swLat . " and longitude > " . $swLng . " and latitude < " . $neLat . " and longitude < " . $neLng)->fetchAll();
         } elseif ($oSwLat != 0) {
-            $datas = $db->query("select gym.gym_id as external_id, latitude as lat, longitude as lon, guard_pokemon_id, slots_available, total_cp, UNIX_TIMESTAMP(CONVERT_TZ(last_modified, '+00:00', @@global.time_zone)) as last_modified, UNIX_TIMESTAMP(CONVERT_TZ(gym.last_scanned, '+00:00', @@global.time_zone)) as last_scanned, team_id as team, enabled, name, level, pokemon_id, cp, move_1, move_2, UNIX_TIMESTAMP(CONVERT_TZ(raid_start, '+00:00', @@global.time_zone)) as raid_start, UNIX_TIMESTAMP(CONVERT_TZ(raid_end, '+00:00', @@global.time_zone)) as raid_end from gym left join gymdetails on gym.gym_id = gymdetails.gym_id left join raid on gym.gym_id = raid.gym_id where latitude > " . $swLat . " and longitude > " . $swLng . " and latitude < " . $neLat . " and longitude < " . $neLng . " and not(latitude > " . $oSwLat . " and longitude > " . $oSwLng . " and latitude < " . $oNeLat . " and longitude < " . $oNeLng . ")")->fetchAll();
+            $datas = $db->query("select gym.gym_id as external_id, latitude as lat, longitude as lon, guard_pokemon_id, slots_available, total_cp, UNIX_TIMESTAMP(CONVERT_TZ(last_modified, '+00:00', @@global.time_zone)) as last_modified, UNIX_TIMESTAMP(CONVERT_TZ(gym.last_scanned, '+00:00', @@global.time_zone)) as last_scanned, team_id as team, enabled, name, level, pokemon_id, cp, move_1, move_2, UNIX_TIMESTAMP(CONVERT_TZ(start, '+00:00', @@global.time_zone)) as raid_start, UNIX_TIMESTAMP(CONVERT_TZ(end, '+00:00', @@global.time_zone)) as raid_end from gym left join gymdetails on gym.gym_id = gymdetails.gym_id left join raid on gym.gym_id = raid.gym_id where latitude > " . $swLat . " and longitude > " . $swLng . " and latitude < " . $neLat . " and longitude < " . $neLng . " and not(latitude > " . $oSwLat . " and longitude > " . $oSwLng . " and latitude < " . $oNeLat . " and longitude < " . $oNeLng . ")")->fetchAll();
         } else {
-            $datas = $db->query("select gym.gym_id as external_id, latitude as lat, longitude as lon, guard_pokemon_id, slots_available, total_cp, UNIX_TIMESTAMP(CONVERT_TZ(last_modified, '+00:00', @@global.time_zone)) as last_modified, UNIX_TIMESTAMP(CONVERT_TZ(gym.last_scanned, '+00:00', @@global.time_zone)) as last_scanned, team_id as team, enabled, name, level, pokemon_id, cp, move_1, move_2, UNIX_TIMESTAMP(CONVERT_TZ(raid_start, '+00:00', @@global.time_zone)) as raid_start, UNIX_TIMESTAMP(CONVERT_TZ(raid_end, '+00:00', @@global.time_zone)) as raid_end from gym left join gymdetails on gym.gym_id = gymdetails.gym_id left join raid on gym.gym_id = raid.gym_id where latitude > " . $swLat . " and longitude > " . $swLng . " and latitude < " . $neLat . " and longitude < " . $neLng)->fetchAll();
+            $datas = $db->query("select gym.gym_id as external_id, latitude as lat, longitude as lon, guard_pokemon_id, slots_available, total_cp, UNIX_TIMESTAMP(CONVERT_TZ(last_modified, '+00:00', @@global.time_zone)) as last_modified, UNIX_TIMESTAMP(CONVERT_TZ(gym.last_scanned, '+00:00', @@global.time_zone)) as last_scanned, team_id as team, enabled, name, level, pokemon_id, cp, move_1, move_2, UNIX_TIMESTAMP(CONVERT_TZ(start, '+00:00', @@global.time_zone)) as raid_start, UNIX_TIMESTAMP(CONVERT_TZ(end, '+00:00', @@global.time_zone)) as raid_end from gym left join gymdetails on gym.gym_id = gymdetails.gym_id left join raid on gym.gym_id = raid.gym_id where latitude > " . $swLat . " and longitude > " . $swLng . " and latitude < " . $neLat . " and longitude < " . $neLng)->fetchAll();
         }
     }
 
@@ -450,8 +477,8 @@ function get_gyms($swLat, $swLng, $neLat, $neLng, $tstamp = 0, $oSwLat = 0, $oSw
         $lat = floatval($row["lat"]);
         $lon = floatval($row["lon"]);
         $gpid = intval($row["guard_pokemon_id"]);
-        $lm = intval($row["last_modified"] * 1000);
-        $ls = isset($row["last_scanned"]) ? intval($row["last_scanned"]) * 1000 : null;
+        $lm = $row["last_modified"] * 1000;
+        $ls = isset($row["last_scanned"]) ? $row["last_scanned"] * 1000 : null;
         $ti = isset($row["team"]) ? intval($row["team"]) : null;
         $tc = isset($row["total_cp"]) ? intval($row["total_cp"]) : null;
         $sa = intval($row["slots_available"]);
@@ -481,8 +508,8 @@ function get_gyms($swLat, $swLng, $neLat, $neLng, $tstamp = 0, $oSwLat = 0, $oSw
             $p['raid_pokemon_cp'] = isset($row['cp']) ? intval($row['cp']) : null;
             $p['raid_pokemon_move_1'] = isset($row['move_1']) ? intval($row['move_1']) : null;
             $p['raid_pokemon_move_2'] = isset($row['move_2']) ? intval($row['move_2']) : null;
-            $p['raid_start'] = intval($row["raid_start"] * 1000);
-            $p['raid_end'] = intval($row["raid_end"] * 1000);
+            $p['raid_start'] = $row["raid_start"] * 1000;
+            $p['raid_end'] = $row["raid_end"] * 1000;
         }
 
         $gym_ids[] = $row["external_id"];
@@ -539,8 +566,8 @@ function get_gyms($swLat, $swLng, $neLat, $neLng, $tstamp = 0, $oSwLat = 0, $oSw
             $gyms[$id]['raid_pokemon_cp'] = isset($raid['cp']) ? intval($raid['cp']) : null;
             $gyms[$id]['raid_pokemon_move_1'] = isset($raid['move_1']) ? intval($raid['move_1']) : null;
             $gyms[$id]['raid_pokemon_move_2'] = isset($raid['move_2']) ? intval($raid['move_2']) : null;
-            $gyms[$id]['raid_start'] = intval($raid["raid_start"] * 1000);
-            $gyms[$id]['raid_end'] = intval($raid["raid_end"] * 1000);
+            $gyms[$id]['raid_start'] = $raid["raid_start"] * 1000;
+            $gyms[$id]['raid_end'] = $raid["raid_end"] * 1000;
 
             unset($raids[$j]);
 
@@ -682,7 +709,7 @@ function get_recent($swLat, $swLng, $neLat, $neLng, $tstamp = 0, $oSwLat = 0, $o
         $p["latitude"] = floatval($row["latitude"]);
         $p["longitude"] = floatval($row["longitude"]);
 
-        $lm = intval($row["last_modified"] * 1000);
+        $lm = $row["last_modified"] * 1000;
         $p["last_modified"] = $lm;
 
         $recent[] = $p;

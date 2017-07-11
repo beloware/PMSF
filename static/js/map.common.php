@@ -818,20 +818,20 @@ filename: 'static/icons-large-sprite.png',
 name: 'Normal'
 },
 monoclelow: {
-columns: 251,
-iconWidth: 30,
-iconHeight: 30,
-spriteWidth: 7530,
-spriteHeight: 30,
+columns: 28,
+iconWidth: 80,
+iconHeight: 80,
+spriteWidth: 2240,
+spriteHeight: 1440,
 filename: 'static/icons-im-1.png',
 name: 'Monocle LQ'
 },
 monoclehq: {
-columns: 251,
-iconWidth: 94.028,
-iconHeight: 96,
-spriteWidth: 23610,
-spriteHeight: 96,
+columns: 28,
+iconWidth: 80,
+iconHeight: 80,
+spriteWidth: 2240,
+spriteHeight: 1440,
 filename: 'static/icons-im-1-bigger.png',
 name: 'Monocle HQ'
 },
@@ -929,12 +929,16 @@ type: StoreTypes.Number
 default: <?php echo $noRaids ? 'false' : $enableRaids ?>,
 type: StoreTypes.Boolean
 },
+'activeRaids': {
+default: <?php echo $activeRaids ?>,
+type: StoreTypes.Boolean
+},
 'minRaidLevel': {
-default: 1,
+default: <?php echo $minRaidLevel ?>,
 type: StoreTypes.Number
 },
 'maxRaidLevel': {
-default: 5,
+default: <?php echo $maxRaidLevel ?>,
 type: StoreTypes.Number
 },
 'showGyms': {
@@ -1020,6 +1024,10 @@ type: StoreTypes.Boolean
 'followMyLocationPosition': {
 default: [],
 type: StoreTypes.JSON
+},
+'spawnArea': {
+default: <?php echo $noSpawnArea ? 'false' : $enableSpawnArea ?>,
+type: StoreTypes.Boolean
 },
 'scanHere': {
 default: false,

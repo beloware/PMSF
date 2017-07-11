@@ -36,6 +36,15 @@ $gmapsKey = "";                                                     // Google Ma
 
 $gAnalyticsId = "";                                                 // "" for empty, "UA-XXXXX-Y" add your Google Analytics tracking ID
 
+/* Piwik Analytics */
+
+$piwikUrl = "";
+$piwikSiteId = "";
+
+/* PayPal */
+
+$paypalUrl = "";                                                    // PayPal donation URL, leave "" for empty
+
 
 //-----------------------------------------------------
 // FRONTEND SETTINGS
@@ -45,6 +54,7 @@ $gAnalyticsId = "";                                                 // "" for em
 
 $noPokemon = false;                                                 // true/false
 $enablePokemon = 'true';                                            // true/false
+$noHighLevelData = false;                                           // true/false
 $noHidePokemon = false;                                             // true/false
 $hidePokemon = '[10, 13, 16, 19, 21, 29, 32, 41, 46, 48, 50, 52, 56, 74, 77, 96, 111, 133,
                   161, 163, 167, 177, 183, 191, 194, 168]';         // [] for empty
@@ -56,6 +66,9 @@ $gymSidebar = 'true';                                               // true/fals
 
 $noRaids = false;                                                   // true/false
 $enableRaids = 'false';                                             // true/false
+$activeRaids = 'false';                                             // true/false
+$minRaidLevel = 1;
+$maxRaidLevel = 5;
 
 $noPokestops = false;                                               // true/false
 $enablePokestops = 'false';                                         // true/false
@@ -82,6 +95,9 @@ $enableStartLast = 'false';                                         // true/fals
 
 $noFollowMe = false;                                                // true/false
 $enableFollowMe = 'false';                                          // true/false
+
+$noSpawnArea = false;                                               // true/false
+$enableSpawnArea = 'false';                                         // true/false
 
 /* Notification Settings */
 

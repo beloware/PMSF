@@ -50,13 +50,29 @@ if (!empty($lat) && !empty($lon)) {
           sizes="180x180">
     <?php if ($gAnalyticsId != "") {
         echo '<!-- Google Analytics -->
-    <script>
-        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-        ga("create", "' . $gAnalyticsId . '", "auto");
-        ga("send", "pageview");
-    </script>
-    <script async src="https://www.google-analytics.com/analytics.js"></script>
-    <!-- End Google Analytics -->';
+            <script>
+                window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+                ga("create", "' . $gAnalyticsId . '", "auto");
+                ga("send", "pageview");
+            </script>
+            <script async src="https://www.google-analytics.com/analytics.js"></script>
+            <!-- End Google Analytics -->';
+    } ?>
+    <?php if ($piwikUrl != "" && $piwikSiteId != "") {
+        echo '<!-- Piwik -->
+            <script type="text/javascript">
+              var _paq = _paq || [];
+              _paq.push(["trackPageView"]);
+              _paq.push(["enableLinkTracking"]);
+              (function() {
+                var u="//' . $piwikUrl . '/";
+                _paq.push(["setTrackerUrl", u+"piwik.php"]);
+                _paq.push(["setSiteId", "' . $piwikSiteId . '"]);
+                var d=document, g=d.createElement("script"), s=d.getElementsByTagName("script")[0];
+                g.type="text/javascript"; g.async=true; g.defer=true; g.src=u+"piwik.js"; s.parentNode.insertBefore(g,s);
+              })();
+            </script>
+            <!-- End Piwik Code -->';
     } ?>
     <link rel="stylesheet" href="static/dist/css/app.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.css">
@@ -72,6 +88,12 @@ if (!empty($lat) && !empty($lon)) {
         <a href="#nav"><span class="label">Options</span></a>
 
         <h1><a href="#"><?= $title ?></a></h1>
+        <?php if ($paypalUrl != "") {
+            echo '<a href="' . $paypalUrl . '" target="_blank" style="margin-bottom: 5px; vertical-align: middle;">
+            <img src="https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit"
+                 title="PayPal - The safer, easier way to pay online!" alt="Donate" style="float: right;">
+        </a>';
+        } ?>
         <a href="#stats" id="statsToggle" class="statsNav" style="float: right;"><span class="label">Stats</span></a>
     </header>
     <!-- NAV -->
@@ -105,7 +127,18 @@ if (!empty($lat) && !empty($lon)) {
                     </div>
                 </div>';
                 } ?>
-                <div id="raids-filter-wrapper" style="display:none">
+                <div id="raids-filter-wrapper">
+                    <div class="form-control switch-container" id="active-raids-wrapper">
+                        <h3>Only Active Raids</h3>
+                        <div class="onoffswitch">
+                            <input id="active-raids-switch" type="checkbox" name="active-raids-switch"
+                                   class="onoffswitch-checkbox" checked>
+                            <label class="onoffswitch-label" for="active-raids-switch">
+                                <span class="switch-label" data-on="On" data-off="Off"></span>
+                                <span class="switch-handle"></span>
+                            </label>
+                        </div>
+                    </div>
                     <div class="form-control switch-container" id="min-level-raids-filter-wrapper">
                         <h3>Minimum Raid Level</h3>
                         <select name="min-level-raids-filter-switch" id="min-level-raids-filter-switch">
@@ -279,7 +312,7 @@ if (!empty($lat) && !empty($lon)) {
                 } ?>
             </div>
 
-            <?php if (!$noSearchLocation || !$noStartMe || !$noStartLast || !$noFollowMe) {
+            <?php if (!$noSearchLocation || !$noStartMe || !$noStartLast || !$noFollowMe || !$noSpawnArea) {
                 echo '<h3>Location &amp; Search Settings</h3>
             <div>';
             } ?>
@@ -330,7 +363,20 @@ if (!empty($lat) && !empty($lon)) {
                     </div>
                 </div>';
             } ?>
-            <?php if (!$noSearchLocation || !$noStartMe || !$noStartLast || !$noFollowMe) {
+            <?php if (!$noSpawnArea) {
+                echo '<div class="form-control switch-container">
+                <h3> Spawn area </h3>
+                <div class="onoffswitch">
+                    <input id = "spawn-area-switch" type = "checkbox" name = "spawn-area-switch"
+                           class="onoffswitch-checkbox"/>
+                    <label class="onoffswitch-label" for="spawn-area-switch">
+                        <span class="switch-label" data - on = "On" data - off = "Off"></span>
+                        <span class="switch-handle"></span>
+                    </label>
+                </div>
+            </div>';
+            } ?>
+            <?php if (!$noSearchLocation || !$noStartMe || !$noStartLast || !$noFollowMe || !$noSpawnArea) {
                 echo '</div>';
             } ?>
 
@@ -451,6 +497,23 @@ if (!empty($lat) && !empty($lon)) {
                 </button>
             </center>
         </div>
+        <div>
+            <center>
+                <button class="settings"
+                        onclick="download('<?= $title ?>', JSON.stringify(JSON.stringify(localStorage)))">
+                    <i class="fa fa-upload" aria-hidden="true"></i> Export Settings
+                </button>
+            </center>
+        </div>
+        <div>
+            <center>
+                <input id="fileInput" type="file" style="display:none;" onchange="openFile(event)"/>
+                <button class="settings"
+                        onclick="document.getElementById('fileInput').click()">
+                    <i class="fa fa-download" aria-hidden="true"></i> Import Settings
+                </button>
+            </center>
+        </div>
     </nav>
     <nav id="stats">
         <div class="switch-container">
@@ -501,6 +564,8 @@ if (!empty($lat) && !empty($lon)) {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/SoundJS/0.6.0/soundjs.min.js"></script>
+<script src="node_modules/push.js/bin/push.min.js"></script>
 <script src="static/dist/js/app.min.js"></script>
 <script src="static/js/vendor/classie.js"></script>
 <script>
